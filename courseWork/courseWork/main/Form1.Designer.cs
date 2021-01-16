@@ -1,4 +1,4 @@
-﻿
+﻿using System.Drawing;
 namespace courseWork
 {
     partial class Form1
@@ -190,6 +190,7 @@ namespace courseWork
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(134, 186, 178);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
