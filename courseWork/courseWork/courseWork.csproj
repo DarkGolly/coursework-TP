@@ -99,6 +99,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search_results.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Search_results.Designer.cs">
+      <DependentUpon>Search_results.cs</DependentUpon>
+    </Compile>
+    <Compile Include="utils.cs" />
     <EmbeddedResource Include="main\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,6 +121,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Search_results.resx">
+      <DependentUpon>Search_results.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Database1DataSet.xsc">
       <DependentUpon>Database1DataSet.xsd</DependentUpon>
     </None>

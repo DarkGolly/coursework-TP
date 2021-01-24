@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 using System.Data.SqlClient;
 
 namespace courseWork
@@ -15,9 +14,8 @@ namespace courseWork
     public partial class Form1 : Form
     {
         private SqlConnection sqlConnection = null;
-        string URI = File.ReadAllText(@"..\..\Resources/path.txt");
-        //private SqlDataAdapter adapter = null;
-        //private DataTable table = null;
+        string URI = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\DarkGolly\\Desktop\\Учёба\\Техналогия программирования" +
+            "\\курсач\\код\\coursework-TP\\courseWork\\courseWork\\main\\Database1.mdf\";Integrated Security=True";
 
         public Form1()
         {
@@ -31,71 +29,41 @@ namespace courseWork
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            if (textBox1.Text == "")
+            {
+                MessageBox.Show("Введите название программы передач!");
+                return;
+            }
+            Search_results search = new Search_results(textBox1.Text);
+            search.ShowDialog(this);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // TODO: данная строка кода позволяет загрузить данные в таблицу "database1DataSet1.TVprograms". При необходимости она может быть перемещена или удалена.
-            //this.tVprogramsTableAdapter.Fill(this.database1DataSet1.TVprograms);
             sqlConnection = new SqlConnection(URI);
 
             sqlConnection.Open();
-            string channel = comboBox1.Text;
-            string ganre = comboBox2.Text;
-            string cense = comboBox3.Text;
-            string search = textBox1.Text;
-            if (channel == "" || channel == "Все")
-            {
-                channel = "";
-            }
-            else
-            {
-                channel = " AND Канал LIKE N\'" + channel + "\'";
-            }
-            if (ganre == "" || ganre == "Все")
-            {
-                ganre = "";
-            }
-            else
-            {
-                ganre = " AND Жанр LIKE N\'" + ganre + "\'";
-            }
-            if (cense == "" || cense == "Все")
-            {
-                cense = "";
-            }
-            else
-            {
-                cense = " AND Ограничение LIKE N\'"+cense+"       \'";
-            }
-            if (search == "" || search == "Все")
-            {
-                search = "";
-            }
-            else
-            {
-                search = " AND Название LIKE N\'%"+ search + "%\'";
-            }
-            string query = "SELECT Канал, Название, Время, Жанр, Ограничение FROM TVprograms WHERE День LIKE N\'" + tabControl1.SelectedTab.Text + "\' "+ channel + ganre + cense + search;
 
+            string query = Utils.building_request(comboBox1.Text, comboBox2.Text, comboBox3.Text, textBox1.Text, tabControl1.SelectedTab.Text);
+            
             SqlCommand command = new SqlCommand(query, sqlConnection);
 
             SqlDataReader reader = command.ExecuteReader();
-
+            
             List<string[]> data = new List<string[]>();
 
-            while (reader.Read())
-            {
-                data.Add(new string[5]);
-                for (int i = 0; i < 5; i++)
-                    data[data.Count - 1][i] = reader[i].ToString();          
-            }
-
+            data = Utils.reared_to_data(reader, data, 5);
+            if (data.Count == 0)
+                MessageBox.Show("По вашему запросу ничего не найдено!");
             reader.Close();
 
             sqlConnection.Close();
 
+            display_dataGrid(sender, e, data);   
+        }
+
+        public void display_dataGrid(object sender, EventArgs e, List<string[]> data)
+        {
             dataGridView1.Rows.Clear();
             dataGridView2.Rows.Clear();
             dataGridView3.Rows.Clear();
@@ -134,12 +102,6 @@ namespace courseWork
                     dataGridView7.Rows.Add(s);
                 }
             }
-                
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
@@ -160,6 +122,12 @@ namespace courseWork
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             Form1_Load(sender, e);
+        }
+        private void сведенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Данная программа является программой передач телеканалов. " +
+                "Тут есть сортировка по жанрам, каналам и возрасту, а так же поиск по названию телепередачи.\n\n" +
+                "Авторы: Даниил Ануфриев, Эльза Салиндер, Данила Рудыченко\n Группа ИС-22", "Сведения о программе");
         }
     }
 }
